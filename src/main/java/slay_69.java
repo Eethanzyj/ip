@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Duke {
+public class slay_69 {
     private static final int MAX_TASKS = 100;
 
     public static void main(String[] args) {
@@ -15,7 +15,7 @@ public class Duke {
 
         System.out.println("Hello from\n" + logo);
         System.out.println(line);
-        System.out.println(" Hello! I'm Duke");
+        System.out.println(" Hello! I'm slay_69");
         System.out.println(" What can I do for you?");
         System.out.println(line);
 
