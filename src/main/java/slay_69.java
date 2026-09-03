@@ -20,8 +20,7 @@ public class slay_69 {
         System.out.println(line);
 
         Scanner scanner = new Scanner(System.in);
-        String[] tasks = new String[MAX_TASKS];
-        boolean[] isDone = new boolean[MAX_TASKS];
+        Task[] tasks = new Task[MAX_TASKS];
         int taskCount = 0;
 
         while (true) {
@@ -33,33 +32,51 @@ public class slay_69 {
                 System.out.println(line);
                 break;
             } else if (input.equals("list")) {
-                // Level-2 & Level-3: Display stored tasks with done status
+                System.out.println(" Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    String statusIcon = isDone[i] ? "[X]" : "[ ]";
-                    System.out.println(" " + (i + 1) + "." + statusIcon + " " + tasks[i]);
+                    System.out.println(" " + (i + 1) + "." + tasks[i]);
                 }
             } else if (input.startsWith("mark ")) {
-                // Level-3: Mark a task as done
                 int taskIndex = Integer.parseInt(input.substring(5)) - 1;
                 if (taskIndex >= 0 && taskIndex < taskCount) {
-                    isDone[taskIndex] = true;
+                    tasks[taskIndex].markAsDone();
                     System.out.println(" Nice! I've marked this task as done:");
-                    System.out.println("   [X] " + tasks[taskIndex]);
+                    System.out.println("   " + tasks[taskIndex]);
                 }
             } else if (input.startsWith("unmark ")) {
-                // Level-3: Mark a task as not done
                 int taskIndex = Integer.parseInt(input.substring(7)) - 1;
                 if (taskIndex >= 0 && taskIndex < taskCount) {
-                    isDone[taskIndex] = false;
+                    tasks[taskIndex].markAsUndone();
                     System.out.println(" OK, I've marked this task as not done yet:");
-                    System.out.println("   [ ] " + tasks[taskIndex]);
+                    System.out.println("   " + tasks[taskIndex]);
                 }
-            } else {
-                // Level-2: Add task to list
-                tasks[taskCount] = input;
-                isDone[taskCount] = false;
+            } else if (input.startsWith("todo ")) {
+                String description = input.substring(5);
+                Task t = new Todo(description);
+                tasks[taskCount] = t;
                 taskCount++;
-                System.out.println(" added: " + input);
+
+                System.out.println(" Got it. I've added this task:");
+                System.out.println("   " + t);
+                System.out.println(" Now you have " + taskCount + " tasks in the list.");
+            } else if (input.startsWith("deadline ")) {
+                String[] parts = input.substring(9).split(" /by ");
+                Task t = new Deadline(parts[0], parts[1]);
+                tasks[taskCount] = t;
+                taskCount++;
+
+                System.out.println(" Got it. I've added this task:");
+                System.out.println("   " + t);
+                System.out.println(" Now you have " + taskCount + " tasks in the list.");
+            } else if (input.startsWith("event ")) {
+                String[] parts = input.substring(6).split(" /from | /to ");
+                Task t = new Event(parts[0], parts[1], parts[2]);
+                tasks[taskCount] = t;
+                taskCount++;
+
+                System.out.println(" Got it. I've added this task:");
+                System.out.println("   " + t);
+                System.out.println(" Now you have " + taskCount + " tasks in the list.");
             }
 
             System.out.println(line);
