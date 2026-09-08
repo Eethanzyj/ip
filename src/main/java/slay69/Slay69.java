@@ -1,9 +1,16 @@
+package slay69;
+
 import java.util.Scanner;
+
+import slay69.task.Deadline;
+import slay69.task.Event;
+import slay69.task.Task;
+import slay69.task.Todo;
 
 /**
  * Runs the Slay69 chatbot and manages the user's tasks.
  */
-public class slay_69 {
+public class Slay69 {
     private static final int MAX_TASKS = 100;
     private static final String LINE =
             "____________________________________________________________";
@@ -126,7 +133,7 @@ public class slay_69 {
             throws Slay69Exception {
         if (arguments.isBlank()) {
             throw new Slay69Exception(
-                    "Okay lor, an event don need a description hor. "
+                    "Okay lor, an event don't need a description hor. "
                             + "Try: event meeting /from Monday /to Tuesday");
         }
 
