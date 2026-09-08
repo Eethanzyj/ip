@@ -1,4 +1,5 @@
-// Developed with assistance from OpenAI Codex.
+package slay69;
+
 /**
  * Represents invalid input supplied to the Slay69 chatbot.
  */
