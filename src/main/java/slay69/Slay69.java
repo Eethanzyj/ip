@@ -1,5 +1,6 @@
 package slay69;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import slay69.task.Deadline;
@@ -11,7 +12,6 @@ import slay69.task.Todo;
  * Runs the Slay69 chatbot and manages the user's tasks.
  */
 public class Slay69 {
-    private static final int MAX_TASKS = 100;
     private static final String LINE =
             "____________________________________________________________";
 
@@ -19,8 +19,7 @@ public class Slay69 {
         printGreeting();
 
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
         boolean isRunning = true;
 
         while (isRunning && scanner.hasNextLine()) {
@@ -32,7 +31,7 @@ public class Slay69 {
                     System.out.println(" Bye. Better do your work.");
                     isRunning = false;
                 } else {
-                    taskCount = executeCommand(input, tasks, taskCount);
+                    executeCommand(input, tasks);
                 }
             } catch (Slay69Exception e) {
                 System.out.println(" HUHHH!!! " + e.getMessage());
@@ -45,11 +44,11 @@ public class Slay69 {
     }
 
     /**
-     * Executes one command and returns the updated task count.
+     * Executes one command, updating the task list when needed.
      *
      * @throws Slay69Exception if the command or its arguments are invalid
      */
-    private static int executeCommand(String input, Task[] tasks, int taskCount)
+    private static void executeCommand(String input, ArrayList<Task> tasks)
             throws Slay69Exception {
         if (input.isEmpty()) {
             throw new Slay69Exception("Please enter a command.");
@@ -64,27 +63,33 @@ public class Slay69 {
         switch (command) {
         case "list":
             requireNoArguments(command, arguments);
-            printTasks(tasks, taskCount);
-            return taskCount;
+            printTasks(tasks);
+            break;
         case "mark":
-            updateTask(arguments, tasks, taskCount, true);
-            return taskCount;
+            updateTask(arguments, tasks, true);
+            break;
         case "unmark":
-            updateTask(arguments, tasks, taskCount, false);
-            return taskCount;
+            updateTask(arguments, tasks, false);
+            break;
+        case "delete":
+            deleteTask(arguments, tasks);
+            break;
         case "todo":
-            return addTask(createTodo(arguments), tasks, taskCount);
+            addTask(createTodo(arguments), tasks);
+            break;
         case "deadline":
-            return addTask(createDeadline(arguments), tasks, taskCount);
+            addTask(createDeadline(arguments), tasks);
+            break;
         case "event":
-            return addTask(createEvent(arguments), tasks, taskCount);
+            addTask(createEvent(arguments), tasks);
+            break;
         case "bye":
             throw new Slay69Exception(
                     "The bye command don't have arguments okay?! Try: bye");
         default:
             throw new Slay69Exception(
                     "What is this command?! "
-                            + "Try: todo, deadline, event, list, mark, unmark, or bye.");
+                            + "Try: todo, deadline, event, list, mark, unmark, delete, or bye.");
         }
     }
 
@@ -173,12 +178,17 @@ public class Slay69 {
         return new Event(description, from, to);
     }
 
-    private static void updateTask(String arguments, Task[] tasks,
-                                   int taskCount, boolean shouldBeDone)
+    /**
+     * Changes the completion status of the task selected by its displayed number.
+     *
+     * @throws Slay69Exception if the task number is missing, invalid, or out of range
+     */
+    private static void updateTask(String arguments, ArrayList<Task> tasks,
+                                   boolean shouldBeDone)
             throws Slay69Exception {
         String command = shouldBeDone ? "mark" : "unmark";
-        int taskIndex = parseTaskIndex(arguments, taskCount, command);
-        Task task = tasks[taskIndex];
+        int taskIndex = parseTaskIndex(arguments, tasks.size(), command);
+        Task task = tasks.get(taskIndex);
 
         if (shouldBeDone) {
             task.markAsDone();
@@ -192,7 +202,23 @@ public class Slay69 {
     }
 
     /**
-     * Converts a user-visible task number into a valid zero-based array index.
+     * Removes the selected task and prints it together with the remaining count.
+     * The list automatically shifts subsequent tasks to fill the gap.
+     *
+     * @throws Slay69Exception if the task number is missing, invalid, or out of range
+     */
+    private static void deleteTask(String arguments, ArrayList<Task> tasks)
+            throws Slay69Exception {
+        int taskIndex = parseTaskIndex(arguments, tasks.size(), "delete");
+        Task removedTask = tasks.remove(taskIndex);
+
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + removedTask);
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Converts a user-visible task number into a valid zero-based list index.
      *
      * @throws Slay69Exception if the number is missing, invalid, or out of range
      */
@@ -222,30 +248,20 @@ public class Slay69 {
         return taskIndex;
     }
 
-    private static int addTask(Task task, Task[] tasks, int taskCount)
-            throws Slay69Exception {
-        if (taskCount >= MAX_TASKS) {
-            throw new Slay69Exception(
-                    "Your task list is full liao. It can hold at most "
-                            + MAX_TASKS + " tasks.");
-        }
-
-        tasks[taskCount] = task;
-        int updatedTaskCount = taskCount + 1;
+    private static void addTask(Task task, ArrayList<Task> tasks) {
+        tasks.add(task);
 
         System.out.println(" Kk. I've added this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + updatedTaskCount
+        System.out.println(" Now you have " + tasks.size()
                 + " tasks in the list.");
-
-        return updatedTaskCount;
     }
 
-    private static void printTasks(Task[] tasks, int taskCount) {
+    private static void printTasks(ArrayList<Task> tasks) {
         System.out.println(" Here are the tasks in your list:");
 
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println(" " + (i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
         }
     }
 
