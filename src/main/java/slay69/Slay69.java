@@ -2,7 +2,9 @@ package slay69;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.IOException;
 
+import slay69.storage.Storage;
 import slay69.task.Deadline;
 import slay69.task.Event;
 import slay69.task.Task;
@@ -15,32 +17,54 @@ public class Slay69 {
     private static final String LINE =
             "____________________________________________________________";
 
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         printGreeting();
 
-        Scanner scanner = new Scanner(System.in);
+        Storage storage = new Storage();
         ArrayList<Task> tasks = new ArrayList<>();
-        boolean isRunning = true;
 
-        while (isRunning && scanner.hasNextLine()) {
-            String input = scanner.nextLine().trim();
+        try {
+            storage.load(tasks);
+        } catch (IOException | Slay69Exception e) {
             System.out.println(LINE);
-
-            try {
-                if (input.equals("bye")) {
-                    System.out.println(" Bye. Better do your work.");
-                    isRunning = false;
-                } else {
-                    executeCommand(input, tasks);
-                }
-            } catch (Slay69Exception e) {
-                System.out.println(" HUHHH!!! " + e.getMessage());
-            }
-
+            System.out.println(" Could not load tasks: " + e.getMessage());
+            System.out.println(" Please check data/slay69.txt and restart.");
             System.out.println(LINE);
+            return;
         }
 
-        scanner.close();
+        boolean isRunning = true;
+
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (isRunning && scanner.hasNextLine()) {
+                String input = scanner.nextLine().trim();
+                System.out.println(LINE);
+
+                try {
+                    if (input.equals("bye")) {
+                        System.out.println(" Bye. Better do your work.");
+                        isRunning = false;
+                    } else {
+                        executeCommand(input, tasks);
+
+                        // Save successful changes, including deletion.
+                        if (!input.equals("list")) {
+                            storage.save(tasks);
+                        }
+                    }
+                } catch (Slay69Exception e) {
+                    System.out.println(" HUHHH!!! " + e.getMessage());
+                } catch (IOException e) {
+                    System.out.println(
+                            " Could not save tasks: " + e.getMessage());
+                    System.out.println(
+                            " Your change is still in memory, "
+                                    + "but may be lost when the app closes.");
+                }
+
+                System.out.println(LINE);
+            }
+        }
     }
 
     /**
@@ -52,6 +76,11 @@ public class Slay69 {
             throws Slay69Exception {
         if (input.isEmpty()) {
             throw new Slay69Exception("Please enter a command.");
+        }
+
+        if (input.contains("|")) {
+            throw new Slay69Exception(
+                    "Please avoid '|'; it is reserved for saving tasks.");
         }
 
         String[] inputParts = input.split("\\s+", 2);
