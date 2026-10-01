@@ -121,7 +121,7 @@ public class Storage {
         if (parts[0].equals("T") && parts.length == 3) {
             task = new Todo(parts[2]);
         } else if (parts[0].equals("D") && parts.length == 4) {
-            task = new Deadline(parts[2], parts[3]);
+            task = Deadline.fromStorage(parts[2], parts[3]);
         } else if (parts[0].equals("E") && parts.length == 5) {
             task = new Event(parts[2], parts[3], parts[4]);
         } else {

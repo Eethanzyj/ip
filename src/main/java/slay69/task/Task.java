@@ -21,6 +21,15 @@ public class Task {
     }
 
     /**
+     * Returns the task description used for keyword searches.
+     *
+     * @return the unformatted task description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
      * Returns X for a completed task or a space for an incomplete task.
      *
      * @return the one-character status icon

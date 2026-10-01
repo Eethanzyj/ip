@@ -3,6 +3,7 @@ package slay69.task;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import slay69.Slay69Exception;
 
@@ -76,6 +77,27 @@ public class TaskList {
      */
     public List<Task> getTasks() {
         return Collections.unmodifiableList(tasks);
+    }
+
+    /**
+     * Returns the original one-based numbers of tasks whose descriptions contain
+     * the keyword, ignoring letter case.
+     *
+     * @param keyword text to look for in task descriptions
+     * @return matching task numbers in their original display order
+     */
+    public List<Integer> find(String keyword) {
+        String searchText = keyword.toLowerCase(Locale.ROOT);
+        List<Integer> matchingNumbers = new ArrayList<>();
+
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).getDescription().toLowerCase(Locale.ROOT)
+                    .contains(searchText)) {
+                matchingNumbers.add(i + 1);
+            }
+        }
+
+        return matchingNumbers;
     }
 
     /**
