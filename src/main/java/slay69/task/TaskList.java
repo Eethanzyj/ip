@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import slay69.Slay69Exception;
+
 /**
  * Owns the user's tasks and provides operations for accessing and changing them.
  */
@@ -33,17 +35,21 @@ public class TaskList {
     }
 
     /**
-     * Returns the task at the given zero-based index.
+     * Returns the task identified by its one-based number.
+     *
+     * @throws Slay69Exception if the task number is outside the list
      */
-    public Task get(int index) {
-        return tasks.get(index);
+    public Task getTask(int taskNumber) throws Slay69Exception {
+        return tasks.get(toIndex(taskNumber));
     }
 
     /**
-     * Removes and returns the task at the given zero-based index.
+     * Removes and returns the task identified by its one-based number.
+     *
+     * @throws Slay69Exception if the task number is outside the list
      */
-    public Task delete(int index) {
-        return tasks.remove(index);
+    public Task deleteTask(int taskNumber) throws Slay69Exception {
+        return tasks.remove(toIndex(taskNumber));
     }
 
     /**
@@ -58,5 +64,18 @@ public class TaskList {
      */
     public List<Task> getTasks() {
         return Collections.unmodifiableList(tasks);
+    }
+
+    /**
+     * Converts a one-based task number to an internal list index.
+     */
+    private int toIndex(int taskNumber) throws Slay69Exception {
+        int index = taskNumber - 1;
+        if (index < 0 || index >= tasks.size()) {
+            throw new Slay69Exception(
+                    "Task " + taskNumber + " does not exist. "
+                            + "You currently have " + tasks.size() + " tasks.");
+        }
+        return index;
     }
 }
