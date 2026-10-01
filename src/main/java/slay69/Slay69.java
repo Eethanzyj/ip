@@ -1,7 +1,6 @@
 package slay69;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.io.IOException;
 
 import slay69.storage.Storage;
@@ -9,43 +8,38 @@ import slay69.task.Deadline;
 import slay69.task.Event;
 import slay69.task.Task;
 import slay69.task.Todo;
+import slay69.ui.Ui;
 
 /**
  * Runs the Slay69 chatbot and manages the user's tasks.
  */
 public class Slay69 {
-    private static final String LINE =
-            "____________________________________________________________";
+    public static void main(String[] args) {
+        try (Ui ui = new Ui()) {
+            ui.showGreeting();
 
-   public static void main(String[] args) {
-        printGreeting();
+            Storage storage = new Storage();
+            ArrayList<Task> tasks = new ArrayList<>();
 
-        Storage storage = new Storage();
-        ArrayList<Task> tasks = new ArrayList<>();
+            try {
+                storage.load(tasks);
+            } catch (IOException | Slay69Exception e) {
+                ui.showLoadingError(e.getMessage());
+                return;
+            }
 
-        try {
-            storage.load(tasks);
-        } catch (IOException | Slay69Exception e) {
-            System.out.println(LINE);
-            System.out.println(" Could not load tasks: " + e.getMessage());
-            System.out.println(" Please check data/slay69.txt and restart.");
-            System.out.println(LINE);
-            return;
-        }
+            boolean isRunning = true;
 
-        boolean isRunning = true;
-
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (isRunning && scanner.hasNextLine()) {
-                String input = scanner.nextLine().trim();
-                System.out.println(LINE);
+            while (isRunning && ui.hasNextCommand()) {
+                String input = ui.readCommand();
+                ui.showLine();
 
                 try {
                     if (input.equals("bye")) {
-                        System.out.println(" Bye. Better do your work.");
+                        ui.showGoodbye();
                         isRunning = false;
                     } else {
-                        executeCommand(input, tasks);
+                        executeCommand(input, tasks, ui);
 
                         // Save successful changes, including deletion.
                         if (!input.equals("list")) {
@@ -53,16 +47,12 @@ public class Slay69 {
                         }
                     }
                 } catch (Slay69Exception e) {
-                    System.out.println(" HUHHH!!! " + e.getMessage());
+                    ui.showError(e.getMessage());
                 } catch (IOException e) {
-                    System.out.println(
-                            " Could not save tasks: " + e.getMessage());
-                    System.out.println(
-                            " Your change is still in memory, "
-                                    + "but may be lost when the app closes.");
+                    ui.showSavingError(e.getMessage());
                 }
 
-                System.out.println(LINE);
+                ui.showLine();
             }
         }
     }
@@ -72,7 +62,8 @@ public class Slay69 {
      *
      * @throws Slay69Exception if the command or its arguments are invalid
      */
-    private static void executeCommand(String input, ArrayList<Task> tasks)
+    private static void executeCommand(String input, ArrayList<Task> tasks,
+                                       Ui ui)
             throws Slay69Exception {
         if (input.isEmpty()) {
             throw new Slay69Exception("Please enter a command.");
@@ -92,25 +83,25 @@ public class Slay69 {
         switch (command) {
         case "list":
             requireNoArguments(command, arguments);
-            printTasks(tasks);
+            ui.showTasks(tasks);
             break;
         case "mark":
-            updateTask(arguments, tasks, true);
+            updateTask(arguments, tasks, true, ui);
             break;
         case "unmark":
-            updateTask(arguments, tasks, false);
+            updateTask(arguments, tasks, false, ui);
             break;
         case "delete":
-            deleteTask(arguments, tasks);
+            deleteTask(arguments, tasks, ui);
             break;
         case "todo":
-            addTask(createTodo(arguments), tasks);
+            addTask(createTodo(arguments), tasks, ui);
             break;
         case "deadline":
-            addTask(createDeadline(arguments), tasks);
+            addTask(createDeadline(arguments), tasks, ui);
             break;
         case "event":
-            addTask(createEvent(arguments), tasks);
+            addTask(createEvent(arguments), tasks, ui);
             break;
         case "bye":
             throw new Slay69Exception(
@@ -213,7 +204,7 @@ public class Slay69 {
      * @throws Slay69Exception if the task number is missing, invalid, or out of range
      */
     private static void updateTask(String arguments, ArrayList<Task> tasks,
-                                   boolean shouldBeDone)
+                                   boolean shouldBeDone, Ui ui)
             throws Slay69Exception {
         String command = shouldBeDone ? "mark" : "unmark";
         int taskIndex = parseTaskIndex(arguments, tasks.size(), command);
@@ -221,13 +212,11 @@ public class Slay69 {
 
         if (shouldBeDone) {
             task.markAsDone();
-            System.out.println(" Slayyyy! I've marked this task as done:");
         } else {
             task.markAsUndone();
-            System.out.println(" When you want do, I've marked this task as not done yet:");
         }
 
-        System.out.println("   " + task);
+        ui.showTaskStatusChanged(task, shouldBeDone);
     }
 
     /**
@@ -236,14 +225,13 @@ public class Slay69 {
      *
      * @throws Slay69Exception if the task number is missing, invalid, or out of range
      */
-    private static void deleteTask(String arguments, ArrayList<Task> tasks)
+    private static void deleteTask(String arguments, ArrayList<Task> tasks,
+                                   Ui ui)
             throws Slay69Exception {
         int taskIndex = parseTaskIndex(arguments, tasks.size(), "delete");
         Task removedTask = tasks.remove(taskIndex);
 
-        System.out.println(" Noted. I've removed this task:");
-        System.out.println("   " + removedTask);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        ui.showTaskDeleted(removedTask, tasks.size());
     }
 
     /**
@@ -277,21 +265,9 @@ public class Slay69 {
         return taskIndex;
     }
 
-    private static void addTask(Task task, ArrayList<Task> tasks) {
+    private static void addTask(Task task, ArrayList<Task> tasks, Ui ui) {
         tasks.add(task);
-
-        System.out.println(" Kk. I've added this task:");
-        System.out.println("   " + task);
-        System.out.println(" Now you have " + tasks.size()
-                + " tasks in the list.");
-    }
-
-    private static void printTasks(ArrayList<Task> tasks) {
-        System.out.println(" Here are the tasks in your list:");
-
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + tasks.get(i));
-        }
+        ui.showTaskAdded(task, tasks.size());
     }
 
     private static void requireNoArguments(String command, String arguments)
@@ -302,18 +278,4 @@ public class Slay69 {
         }
     }
 
-    private static void printGreeting() {
-        String logo = " ____  _            __    ___\n"
-                + "/ ___|| | __ _ _   _/ /_  / _ \\\n"
-                + "\\___ \\| |/ _` | | | | '_ \\| (_) |\n"
-                + " ___) | | (_| | |_| | (_) \\__, |\n"
-                + "|____/|_|\\__,_|\\__, |\\___/  /_/ \n"
-                + "               |___/            \n";
-
-        System.out.println("Hello from\n" + logo);
-        System.out.println(LINE);
-        System.out.println(" Wassup! I'm slay_69");
-        System.out.println(" What you want?");
-        System.out.println(LINE);
-    }
 }
