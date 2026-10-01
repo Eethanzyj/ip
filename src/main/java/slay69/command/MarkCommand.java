@@ -14,10 +14,21 @@ import slay69.ui.Ui;
 public class MarkCommand extends Command {
     private final int taskNumber;
 
+    /**
+     * Creates a command that marks a task as completed.
+     *
+     * @param taskNumber one-based task number
+     */
     public MarkCommand(int taskNumber) {
         this.taskNumber = taskNumber;
     }
 
+    /**
+     * Marks the selected task as done, confirms the change, and saves the list.
+     *
+     * @throws Slay69Exception if the task number is outside the list
+     * @throws IOException if saving fails
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage)
             throws Slay69Exception, IOException {

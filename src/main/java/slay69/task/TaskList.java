@@ -23,6 +23,8 @@ public class TaskList {
     /**
      * Creates a task list containing the supplied tasks.
      * A defensive copy prevents callers from changing the list directly.
+     *
+     * @param tasks initial tasks in display order
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
@@ -30,6 +32,8 @@ public class TaskList {
 
     /**
      * Adds a task to the end of the list.
+     *
+     * @param task task to add
      */
     public void add(Task task) {
         tasks.add(task);
@@ -38,6 +42,8 @@ public class TaskList {
     /**
      * Returns the task identified by its one-based number.
      *
+     * @param taskNumber number shown beside the task in the user interface
+     * @return the selected task
      * @throws Slay69Exception if the task number is outside the list
      */
     public Task getTask(int taskNumber) throws Slay69Exception {
@@ -47,6 +53,8 @@ public class TaskList {
     /**
      * Removes and returns the task identified by its one-based number.
      *
+     * @param taskNumber number shown beside the task in the user interface
+     * @return the removed task
      * @throws Slay69Exception if the task number is outside the list
      */
     public Task deleteTask(int taskNumber) throws Slay69Exception {
@@ -55,6 +63,8 @@ public class TaskList {
 
     /**
      * Returns the number of tasks in the list.
+     *
+     * @return the current task count
      */
     public int size() {
         return tasks.size();
@@ -62,6 +72,8 @@ public class TaskList {
 
     /**
      * Returns a read-only view for displaying or saving the tasks.
+     *
+     * @return tasks in display order
      */
     public List<Task> getTasks() {
         return Collections.unmodifiableList(tasks);
@@ -70,6 +82,9 @@ public class TaskList {
     /**
      * Returns the original one-based numbers of tasks whose descriptions contain
      * the keyword, ignoring letter case.
+     *
+     * @param keyword text to look for in task descriptions
+     * @return matching task numbers in their original display order
      */
     public List<Integer> find(String keyword) {
         String searchText = keyword.toLowerCase(Locale.ROOT);

@@ -26,6 +26,8 @@ public final class Parser {
     /**
      * Parses a complete line of user input.
      *
+     * @param input command text entered by the user
+     * @return the command to execute
      * @throws Slay69Exception if the command or its arguments are invalid
      */
     public static Command parse(String input) throws Slay69Exception {
@@ -76,6 +78,11 @@ public final class Parser {
         }
     }
 
+    /**
+     * Validates the description before creating a todo task.
+     *
+     * @throws Slay69Exception if the description is missing
+     */
     private static Todo createTodo(String description)
             throws Slay69Exception {
         if (description.isBlank()) {
@@ -85,6 +92,11 @@ public final class Parser {
         return new Todo(description);
     }
 
+    /**
+     * Separates a deadline description from its /by value and checks both fields.
+     *
+     * @throws Slay69Exception if the description, marker, or deadline is missing
+     */
     private static Deadline createDeadline(String arguments)
             throws Slay69Exception {
         if (arguments.isBlank()) {
@@ -119,6 +131,11 @@ public final class Parser {
         }
     }
 
+    /**
+     * Separates an event description from its /from and /to values.
+     *
+     * @throws Slay69Exception if any required marker or field is missing
+     */
     private static Event createEvent(String arguments)
             throws Slay69Exception {
         if (arguments.isBlank()) {

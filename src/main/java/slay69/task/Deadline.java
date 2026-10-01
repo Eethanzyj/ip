@@ -19,6 +19,9 @@ public class Deadline extends Task {
 
     /**
      * Creates a deadline with a date that can be compared and formatted.
+     *
+     * @param description text describing the task
+     * @param dueDate due date parsed from an ISO date entered by the user
      */
     public Deadline(String description, LocalDate dueDate) {
         super(description);
@@ -26,6 +29,9 @@ public class Deadline extends Task {
         this.legacyDueText = null;
     }
 
+    /**
+     * Keeps a deadline saved before dates had a structured format.
+     */
     private Deadline(String description, String legacyDueText) {
         super(description);
         this.dueDate = null;
@@ -35,6 +41,9 @@ public class Deadline extends Task {
     /**
      * Loads an ISO date or preserves free-text deadlines saved by older versions.
      *
+     * @param description text describing the task
+     * @param savedDueDate date field from the saved task
+     * @return a date-backed or legacy deadline task
      * @throws Slay69Exception if an ISO-shaped saved date is invalid
      */
     public static Deadline fromStorage(String description, String savedDueDate)
@@ -50,6 +59,11 @@ public class Deadline extends Task {
         }
     }
 
+    /**
+     * Returns the displayed task text with a formatted date or legacy text.
+     *
+     * @return the displayed deadline
+     */
     @Override
     public String toString() {
         String displayedDate = dueDate == null
@@ -57,6 +71,11 @@ public class Deadline extends Task {
         return "[D]" + super.toString() + " (by: " + displayedDate + ")";
     }
 
+    /**
+     * Returns the saved task fields using ISO dates for date-backed deadlines.
+     *
+     * @return the serialized deadline
+     */
     @Override
     public String toStorageString() {
         String savedDate = dueDate == null ? legacyDueText : dueDate.toString();

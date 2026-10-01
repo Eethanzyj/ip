@@ -14,11 +14,16 @@ public class FindCommand extends Command {
 
     /**
      * Creates a search command for the supplied keyword or phrase.
+     *
+     * @param keyword text to look for in task descriptions
      */
     public FindCommand(String keyword) {
         this.keyword = keyword;
     }
 
+    /**
+     * Displays tasks whose descriptions contain the search text.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         List<Integer> matchingNumbers = tasks.find(keyword);
