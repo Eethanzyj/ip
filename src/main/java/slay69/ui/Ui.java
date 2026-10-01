@@ -23,6 +23,8 @@ public class Ui implements AutoCloseable {
 
     /**
      * Returns whether another command is available from the input stream.
+     *
+     * @return true if another line can be read
      */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
@@ -30,6 +32,8 @@ public class Ui implements AutoCloseable {
 
     /**
      * Reads the next command and removes surrounding whitespace.
+     *
+     * @return the trimmed command text
      */
     public String readCommand() {
         return scanner.nextLine().trim();
@@ -62,6 +66,8 @@ public class Ui implements AutoCloseable {
 
     /**
      * Displays an error encountered while loading saved tasks.
+     *
+     * @param message explanation of the loading error
      */
     public void showLoadingError(String message) {
         showLine();
@@ -72,6 +78,8 @@ public class Ui implements AutoCloseable {
 
     /**
      * Displays an invalid-command or invalid-task error.
+     *
+     * @param message explanation of the invalid input
      */
     public void showError(String message) {
         System.out.println(" HUHHH!!! " + message);
@@ -79,6 +87,8 @@ public class Ui implements AutoCloseable {
 
     /**
      * Warns that an in-memory change could not be saved.
+     *
+     * @param message explanation of the saving error
      */
     public void showSavingError(String message) {
         System.out.println(" Could not save tasks: " + message);
@@ -95,6 +105,8 @@ public class Ui implements AutoCloseable {
 
     /**
      * Displays every task with its one-based task number.
+     *
+     * @param tasks tasks in their display order
      */
     public void showTasks(List<Task> tasks) {
         System.out.println(" Here are the tasks in your list:");
@@ -106,6 +118,9 @@ public class Ui implements AutoCloseable {
 
     /**
      * Displays confirmation that a task was added.
+     *
+     * @param task task that was added
+     * @param taskCount total number of tasks after the addition
      */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println(" Kk. I've added this task:");
@@ -116,6 +131,9 @@ public class Ui implements AutoCloseable {
 
     /**
      * Displays confirmation that a task was removed.
+     *
+     * @param task task that was removed
+     * @param taskCount total number of tasks after the deletion
      */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println(" Noted. I've removed this task:");
@@ -125,6 +143,9 @@ public class Ui implements AutoCloseable {
 
     /**
      * Displays confirmation that a task's completion status changed.
+     *
+     * @param task task whose status changed
+     * @param isDone whether the task is now completed
      */
     public void showTaskStatusChanged(Task task, boolean isDone) {
         if (isDone) {

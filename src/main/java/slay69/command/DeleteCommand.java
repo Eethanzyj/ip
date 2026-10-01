@@ -14,10 +14,21 @@ import slay69.ui.Ui;
 public class DeleteCommand extends Command {
     private final int taskNumber;
 
+    /**
+     * Creates a command that deletes a task by its displayed number.
+     *
+     * @param taskNumber one-based task number
+     */
     public DeleteCommand(int taskNumber) {
         this.taskNumber = taskNumber;
     }
 
+    /**
+     * Removes the selected task, confirms the change, and saves the list.
+     *
+     * @throws Slay69Exception if the task number is outside the list
+     * @throws IOException if saving fails
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage)
             throws Slay69Exception, IOException {

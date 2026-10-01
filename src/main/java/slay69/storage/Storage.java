@@ -30,6 +30,8 @@ public class Storage {
 
     /**
      * Creates storage that uses the specified file path.
+     *
+     * @param filePath path to the saved task file
      */
     public Storage(String filePath) {
         file = new File(filePath);
@@ -39,6 +41,7 @@ public class Storage {
      * Loads and returns the saved tasks.
      * A missing file means there are no saved tasks yet.
      *
+     * @return tasks reconstructed from the file
      * @throws IOException if reading fails
      * @throws Slay69Exception if saved data is invalid
      */
@@ -73,6 +76,7 @@ public class Storage {
     /**
      * Saves the current tasks, creating the data folder if needed.
      *
+     * @param tasks tasks to write in their current order
      * @throws IOException if the folder cannot be created or writing fails
      */
     public void save(List<Task> tasks) throws IOException {

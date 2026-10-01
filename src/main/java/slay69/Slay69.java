@@ -19,6 +19,8 @@ public class Slay69 {
     /**
      * Creates the chatbot and loads tasks from the specified file.
      * A loading error is retained so it can be shown after the welcome message.
+     *
+     * @param filePath path to the saved task file
      */
     public Slay69(String filePath) {
         ui = new Ui();
@@ -71,6 +73,8 @@ public class Slay69 {
 
     /**
      * Starts Slay69 using its default data file.
+     *
+     * @param args command-line arguments, which are ignored
      */
     public static void main(String[] args) {
         new Slay69("data/slay69.txt").run();

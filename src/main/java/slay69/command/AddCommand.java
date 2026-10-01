@@ -13,10 +13,20 @@ import slay69.ui.Ui;
 public class AddCommand extends Command {
     private final Task task;
 
+    /**
+     * Creates a command that adds the supplied task.
+     *
+     * @param task task to add
+     */
     public AddCommand(Task task) {
         this.task = task;
     }
 
+    /**
+     * Adds the task, confirms the change, and saves the list.
+     *
+     * @throws IOException if saving fails
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage)
             throws IOException {
