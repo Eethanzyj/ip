@@ -10,4 +10,4 @@ Open this project in IntelliJ IDEA, set the project SDK to Java 25, and run the 
 
 ## Run a release
 
-Download the JAR from the latest GitHub release and run `java -jar Slay69.jar` in a terminal, replacing the filename if necessary. Slay69 saves tasks in `data/slay69.txt` relative to the folder where you run it.
+Download the JAR from the latest GitHub release and run `java -jar ip.jar` in a terminal. If you renamed the JAR, use its new filename instead. Slay69 saves tasks in `data/slay69.txt` relative to the folder where you run it.

@@ -7,10 +7,10 @@ Slay69 is a command-line chatbot that helps you keep track of tasks. You can add
 Install Java 25. Download the JAR from the latest GitHub release, open a terminal in a folder where you want your task data stored, and run:
 
 ```text
-java -jar Slay69.jar
+java -jar ip.jar
 ```
 
-Replace `Slay69.jar` with the downloaded file’s name if it differs. Enter one command per line. Type `bye` to exit. Slay69 automatically saves changes to `data/slay69.txt` in the folder where you run it and loads them next time.
+If you renamed the downloaded JAR, use its new filename instead. Enter one command per line. Type `bye` to exit. Slay69 automatically saves changes to `data/slay69.txt` in the folder where you run it and loads them next time.
 
 ## Commands
 
