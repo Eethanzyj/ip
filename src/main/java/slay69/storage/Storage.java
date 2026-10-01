@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.ArrayList;
 
 import slay69.Slay69Exception;
 import slay69.task.Deadline;
@@ -17,19 +17,37 @@ import slay69.task.Todo;
  * Saves and loads tasks from a text file in the data folder.
  */
 public class Storage {
-    private final File file = new File("data/slay69.txt");
+    private static final String DEFAULT_FILE_PATH = "data/slay69.txt";
+
+    private final File file;
 
     /**
-     * Loads saved tasks into the supplied empty list.
+     * Creates storage that uses the application's default data file.
+     */
+    public Storage() {
+        this(DEFAULT_FILE_PATH);
+    }
+
+    /**
+     * Creates storage that uses the specified file path.
+     */
+    public Storage(String filePath) {
+        file = new File(filePath);
+    }
+
+    /**
+     * Loads and returns the saved tasks.
      * A missing file means there are no saved tasks yet.
      *
      * @throws IOException if reading fails
      * @throws Slay69Exception if saved data is invalid
      */
-    public void load(ArrayList<Task> tasks)
+    public ArrayList<Task> load()
             throws IOException, Slay69Exception {
+        ArrayList<Task> tasks = new ArrayList<>();
+
         if (!file.exists()) {
-            return;
+            return tasks;
         }
 
         try (Scanner scanner = new Scanner(file)) {
@@ -48,6 +66,8 @@ public class Storage {
                 throw scanner.ioException();
             }
         }
+
+        return tasks;
     }
 
     /**
@@ -55,7 +75,7 @@ public class Storage {
      *
      * @throws IOException if the folder cannot be created or writing fails
      */
-    public void save(ArrayList<Task> tasks) throws IOException {
+    public void save(List<Task> tasks) throws IOException {
         File folder = file.getParentFile();
 
         if (!folder.isDirectory() && !folder.mkdirs()) {

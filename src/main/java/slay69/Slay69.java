@@ -1,12 +1,12 @@
 package slay69;
 
-import java.util.ArrayList;
 import java.io.IOException;
 
 import slay69.storage.Storage;
 import slay69.task.Deadline;
 import slay69.task.Event;
 import slay69.task.Task;
+import slay69.task.TaskList;
 import slay69.task.Todo;
 import slay69.ui.Ui;
 
@@ -19,10 +19,10 @@ public class Slay69 {
             ui.showGreeting();
 
             Storage storage = new Storage();
-            ArrayList<Task> tasks = new ArrayList<>();
+            TaskList tasks;
 
             try {
-                storage.load(tasks);
+                tasks = new TaskList(storage.load());
             } catch (IOException | Slay69Exception e) {
                 ui.showLoadingError(e.getMessage());
                 return;
@@ -43,7 +43,7 @@ public class Slay69 {
 
                         // Save successful changes, including deletion.
                         if (!input.equals("list")) {
-                            storage.save(tasks);
+                            storage.save(tasks.getTasks());
                         }
                     }
                 } catch (Slay69Exception e) {
@@ -62,7 +62,7 @@ public class Slay69 {
      *
      * @throws Slay69Exception if the command or its arguments are invalid
      */
-    private static void executeCommand(String input, ArrayList<Task> tasks,
+    private static void executeCommand(String input, TaskList tasks,
                                        Ui ui)
             throws Slay69Exception {
         if (input.isEmpty()) {
@@ -83,7 +83,7 @@ public class Slay69 {
         switch (command) {
         case "list":
             requireNoArguments(command, arguments);
-            ui.showTasks(tasks);
+            ui.showTasks(tasks.getTasks());
             break;
         case "mark":
             updateTask(arguments, tasks, true, ui);
@@ -203,7 +203,7 @@ public class Slay69 {
      *
      * @throws Slay69Exception if the task number is missing, invalid, or out of range
      */
-    private static void updateTask(String arguments, ArrayList<Task> tasks,
+    private static void updateTask(String arguments, TaskList tasks,
                                    boolean shouldBeDone, Ui ui)
             throws Slay69Exception {
         String command = shouldBeDone ? "mark" : "unmark";
@@ -225,11 +225,11 @@ public class Slay69 {
      *
      * @throws Slay69Exception if the task number is missing, invalid, or out of range
      */
-    private static void deleteTask(String arguments, ArrayList<Task> tasks,
+    private static void deleteTask(String arguments, TaskList tasks,
                                    Ui ui)
             throws Slay69Exception {
         int taskIndex = parseTaskIndex(arguments, tasks.size(), "delete");
-        Task removedTask = tasks.remove(taskIndex);
+        Task removedTask = tasks.delete(taskIndex);
 
         ui.showTaskDeleted(removedTask, tasks.size());
     }
@@ -265,7 +265,7 @@ public class Slay69 {
         return taskIndex;
     }
 
-    private static void addTask(Task task, ArrayList<Task> tasks, Ui ui) {
+    private static void addTask(Task task, TaskList tasks, Ui ui) {
         tasks.add(task);
         ui.showTaskAdded(task, tasks.size());
     }
