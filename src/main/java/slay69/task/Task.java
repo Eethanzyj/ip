@@ -9,6 +9,13 @@ public class Task {
         this.isDone = false;
     }
 
+    /**
+     * Returns the task description used for keyword searches.
+     */
+    public String getDescription() {
+        return description;
+    }
+
     public String getStatusIcon() {
         return (isDone ? "X" : " "); // mark done task with X
     }

@@ -105,6 +105,21 @@ public class Ui implements AutoCloseable {
     }
 
     /**
+     * Displays matching tasks with their original numbers in the full list.
+     */
+    public void showMatchingTasks(List<Task> tasks, List<Integer> matchingNumbers) {
+        System.out.println(" Here are the matching tasks in your list:");
+
+        if (matchingNumbers.isEmpty()) {
+            System.out.println(" No matching tasks found.");
+        }
+
+        for (int taskNumber : matchingNumbers) {
+            System.out.println(" " + taskNumber + "." + tasks.get(taskNumber - 1));
+        }
+    }
+
+    /**
      * Displays confirmation that a task was added.
      */
     public void showTaskAdded(Task task, int taskCount) {

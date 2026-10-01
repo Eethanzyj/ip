@@ -7,6 +7,7 @@ import slay69.command.AddCommand;
 import slay69.command.Command;
 import slay69.command.DeleteCommand;
 import slay69.command.ExitCommand;
+import slay69.command.FindCommand;
 import slay69.command.ListCommand;
 import slay69.command.MarkCommand;
 import slay69.command.UnmarkCommand;
@@ -47,6 +48,11 @@ public final class Parser {
         case "list":
             requireNoArguments(commandWord, arguments);
             return new ListCommand();
+        case "find":
+            if (arguments.isBlank()) {
+                throw new Slay69Exception("Please provide a keyword. Try: find book");
+            }
+            return new FindCommand(arguments);
         case "mark":
             return new MarkCommand(parseTaskNumber(arguments, commandWord));
         case "unmark":
@@ -66,7 +72,7 @@ public final class Parser {
             throw new Slay69Exception(
                     "What is this command?! "
                             + "Try: todo, deadline, event, list, mark, "
-                            + "unmark, delete, or bye.");
+                            + "unmark, delete, find, or bye.");
         }
     }
 
