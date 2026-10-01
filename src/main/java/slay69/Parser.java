@@ -1,5 +1,8 @@
 package slay69;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import slay69.command.AddCommand;
 import slay69.command.Command;
 import slay69.command.DeleteCommand;
@@ -81,27 +84,33 @@ public final class Parser {
         if (arguments.isBlank()) {
             throw new Slay69Exception(
                     "A deadline needs a description laaaa. "
-                            + "Try: deadline return book /by Sunday");
+                            + "Try: deadline return book /by 2019-12-02");
         }
 
         String[] parts = arguments.split("/by", 2);
         if (parts.length < 2) {
             throw new Slay69Exception(
                     "Please laaaaa, a deadline needs '/by'. "
-                            + "Try: deadline return book /by Sunday");
+                            + "Try: deadline return book /by 2019-12-02");
         }
 
         String description = parts[0].trim();
-        String by = parts[1].trim();
+        String dateText = parts[1].trim();
         if (description.isEmpty()) {
             throw new Slay69Exception(
                     "Hello, a deadline needs a description before '/by'.");
         }
-        if (by.isEmpty()) {
+        if (dateText.isEmpty()) {
             throw new Slay69Exception(
                     "???, a deadline needs a date or time after '/by' right?!");
         }
-        return new Deadline(description, by);
+
+        try {
+            return new Deadline(description, LocalDate.parse(dateText));
+        } catch (DateTimeParseException e) {
+            throw new Slay69Exception(
+                    "Invalid deadline date. Use yyyy-MM-dd, for example 2019-12-02.");
+        }
     }
 
     private static Event createEvent(String arguments)
